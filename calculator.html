@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Calculator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+        }
+        .calculator {
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 5px;
+            background-color: gray;
+        }
+        .calculator-screen {
+            width: 100%;
+            height: 60px;
+            text-align: right;
+            border: black;
+            padding-right: 100px;
+            padding-left: 100px;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .calculator-keys button {
+            width: calc(25% - 10px);
+            height: 60px;
+            margin: 5px;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6">
+                <h1 id="title">DOM Calculator</h1>
+                <p id="description">calculator.</p>
+                <div class="calculator">
+                    <input type="text" class="calculator-screen" id="result" disabled>
+                    <div class="calculator-keys">
+                        <button type="button" class="btn btn-light" id="1">1</button>
+                        <button type="button" class="btn btn-light" id="2">2</button>
+                        <button type="button" class="btn btn-light" id="3">3</button>
+                        <button type="button" class="btn btn-light" id="4">4</button>
+                        <button type="button" class="btn btn-light" id="5">5</button>
+                        <button type="button" class="btn btn-light" id="6">6</button>
+                        <button type="button" class="btn btn-light" id="7">7</button>
+                        <button type="button" class="btn btn-light" id="8">8</button>
+                        <button type="button" class="btn btn-light" id="9">9</button>
+                        <button type="button" class="btn btn-light" id="0">0</button>
+                        <button type="button" class="btn btn-light" id="decimal">.</button>
+                        <button type="button" class="btn btn-secondary" id="add" data-action="add">+</button>
+                        <button type="button" class="btn btn-secondary" id="subtract" data-action="subtract">-</button>
+                        <button type="button" class="btn btn-secondary" id="multiply" data-action="multiply">*</button>
+                        <button type="button" class="btn btn-secondary" id="divide" data-action="divide">/</button>
+                        <button type="button" class="btn btn-secondary" id="modulus" data-action="modulus">%</button>
+                        <button type="button" class="btn btn-secondary" id="clear" data-action="clear">C</button>
+                        <button type="button" class="btn btn-secondary" id="equal" data-action="calculate">=</button>
+                        <button type="button" class="btn btn-secondary" id="mplus" data-action="mplus">M+</button>
+                        <button type="button" class="btn btn-secondary" id="mminus" data-action="mminus">M-</button>
+                        <button type="button" class="btn btn-secondary" id="mc" data-action="mc">MC</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const display = document.getElementById('result');
+            const keys = document.querySelector('.calculator-keys');
+            let memory = 0;
+
+            keys.addEventListener('click', (event) => {
+                const { target } = event;
+                const { action } = target.dataset;
+                const keyContent = target.textContent;
+                const displayedNum = display.value;
+
+                if (!target.matches('button')) return;
+
+                switch(action) {
+                    case 'add':
+                    case 'subtract':
+                    case 'multiply':
+                    case 'divide':
+                    case 'modulus':
+                        display.value = displayedNum + ' ' + keyContent + ' ';
+                        break;
+                    case 'clear':
+                        display.value = '';
+                        break;
+                    case 'calculate':
+                        try {
+                            display.value = eval(display.value);
+                        } catch (e) {
+                            alert('Invalid Expression');
+                        }
+                        break;
+                    case 'mplus':
+                        memory += parseFloat(display.value) || 0;
+                        localStorage.setItem('memory', memory);
+                        break;
+                    case 'mminus':
+                        memory -= parseFloat(display.value) || 0;
+                        localStorage.setItem('memory', memory);
+                        break;
+                    case 'mc':
+                        memory = 0;
+                        localStorage.removeItem('memory');
+                        break;
+                    default:
+                        display.value += keyContent;
+                        break;
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key >= '0' && event.key <= '9') {
+                    display.value += event.key;
+                } else {
+                    alert('Only numbers are allowed');
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+    <script src="https://app.zenclass.in/sheets/v1/js/zen/suite/bundle.js"></script>
+</body>
+</html>
